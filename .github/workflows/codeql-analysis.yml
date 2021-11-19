@@ -50,31 +50,56 @@ jobs:
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
-    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-    # If this step fails, then you should remove it and run the build manually (see below)
-    #- name: Autobuild
-    #  uses: github/codeql-action/autobuild@v1
-
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 https://git.io/JvXDl
-
-    # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
-    #    and modify them (or add more) to build your code if your project
-    #    uses a compiled language
-
-    #- run: |
-    #   make bootstrap
-    #   make release
-
-
-# custom compile code 
-    - name: Set up JDK 11
+    - name: Set up JDK 11.0.3
       uses: actions/setup-java@v2
       with:
-       java-version: '11'
-       distribution: 'adopt'
+        java-version: 11.0.3
+        distribution: 'zulu'
+        cache: 'maven'
+
+    # Cache Sonar packages which as used to run anaylysis and collect metrics
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+    # Some tests need screen access
+    - name: Install xvfb
+      run: sudo apt-get install -y xvfb
+
+    - name: Build with Maven and run SonarQube analysis
+      run: xvfb-run ./mvnw clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+      env:
+        # These two env variables are needed for sonar analysis
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  
+  # This Workflow Job is going to build the project on the latest stable JDK 11
+  build:
+
+    name: Build and Test on JDK 11
+    runs-on: ubuntu-20.04
+    steps:
+
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 11 (Latest)
+      uses: actions/setup-java@v2
+      with:
+        java-version: 11
+        distribution: 'zulu'
+        cache: 'maven'
+
+    # Some tests need screen access
+    - name: Install xvfb
+      run: sudo apt-get install -y xvfb
+
     - name: Build with Maven
-      run: mvn --batch-mode -X --update-snapshots verify
+      run: xvfb-run ./mvnw clean verify
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
