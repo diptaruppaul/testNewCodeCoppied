@@ -56,27 +56,7 @@ jobs:
         java-version: 11
         distribution: 'zulu'
         cache: 'maven'
-
-    # Cache Sonar packages which as used to run anaylysis and collect metrics
-    - name: Cache SonarCloud packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
-
-    # Some tests need screen access
-    - name: Install xvfb
-      run: sudo apt-get install -y xvfb
-
-    - name: Build with Maven and run SonarQube analysis
-      run: xvfb-run ./mvnw clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-      env:
-        # These two env variables are needed for sonar analysis
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  
+ 
   # This Workflow Job is going to build the project on the latest stable JDK 11
   build:
 
@@ -92,13 +72,12 @@ jobs:
       uses: github/codeql-action/init@v1
       with:
         languages: ${{ matrix.language }}
- 
-   
-
+        
+        
     # Some tests need screen access
     - name: Install xvfb
       run: sudo apt-get install -y xvfb
-
+      
     - name: Build with Maven
       run: xvfb-run ./mvnw clean verify
 
