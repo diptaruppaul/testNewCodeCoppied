@@ -17,8 +17,10 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
-  schedule:
-    - cron: '44 12 * * 6'
+    
+# uncomment the scheduler and cron below to enable the schedule scan.    
+#  schedule:
+#    - cron: '44 12 * * 6'
 
 jobs:
   analyze:
