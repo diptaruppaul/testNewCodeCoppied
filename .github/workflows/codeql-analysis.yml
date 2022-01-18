@@ -47,8 +47,9 @@ jobs:
       uses: github/codeql-action/init@v1
       with:
        languages: ${{ matrix.language }}
+       config-file: ./.github/codeql/codeql-config.yml
        # Comma-separated list of packs to download
-       packs: scope/pack1,scope/pack2@1.2.3,scope/pack3@~1.2.3
+       # packs: scope/pack1,scope/pack2@1.2.3,scope/pack3@~1.2.3
        
 #***************************************************       
        
