@@ -1,4 +1,4 @@
 name: "Custom CodeQL Config"
     
 queries:
-- uses: security-extended
+- uses: security
