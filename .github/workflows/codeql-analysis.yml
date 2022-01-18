@@ -47,6 +47,11 @@ jobs:
       uses: github/codeql-action/init@v1
       with:
        languages: ${{ matrix.language }}
+       # Comma-separated list of packs to download
+       packs: scope/pack1,scope/pack2@1.2.3,scope/pack3@~1.2.3
+       
+#***************************************************       
+       
        
  #*** build the project on the latest stable JDK 11
     - name: Set up JDK 11.0.3
@@ -66,3 +71,4 @@ jobs:
 #******** Executing COdeQL scan after build ****
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
+     
